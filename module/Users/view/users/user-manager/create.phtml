@@ -1,5 +1,5 @@
 <section class="register">
-    <h2>Register</h2>
+    <h2>Create User</h2>
     <?php if ($this->error): ?>
     <p class="error">
         There were one or more issues with your submission.
@@ -10,7 +10,7 @@
 <?php
 $form = $this->form;
 $form->prepare();
-$form->setAttribute('action', $this->url(null, array('controller' => 'Register', 'action' => 'process')));
+$form->setAttribute('action', $this->url(null, array('controller' => 'user-manager', 'action' => 'process-create')));
 $form->setAttribute('method', 'post');
 echo $this->form()->openTag($form);
 ?>

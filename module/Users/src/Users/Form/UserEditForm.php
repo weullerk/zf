@@ -10,13 +10,23 @@ namespace Users\Form;
 
 use Zend\Form\Form;
 
-class LoginForm extends Form
+class UserEditForm extends Form
 {
     public function __construct()
     {
-        parent::__construct('Login');
+        parent::__construct('UserEdit');
         $this->setAttribute('method', 'post');
         $this->setAttribute('enctype', 'multipart/form-data');
+
+        $this->add(array(
+            'name' => 'name',
+            'attributes' => array(
+                'type' => 'text',
+            ),
+            'options' => array(
+                'label' => 'Full Name'
+            )
+        ));
 
         $this->add(array(
             'name' => 'email',
@@ -56,10 +66,17 @@ class LoginForm extends Form
             'name' => 'submit',
             'attributes' => array(
                 'type' => 'submit',
-                'value' => 'Login'
+                'value' => 'Save'
             ),
             'options' => array(
-                'label' => 'Login'
+                'label' => 'Save'
+            )
+        ));
+
+        $this->add(array(
+            'name' => 'id',
+            'attributes' => array(
+                'type' => 'hidden'
             )
         ));
     }

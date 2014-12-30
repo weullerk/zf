@@ -28,25 +28,23 @@ class RegisterFilter extends InputFilter
         ));
 
         $this->add(array(
-            $this->add(array(
-                'name' => 'name',
-                'required' => true,
-                'filters' => array(
-                    array(
-                        'name' => 'StripTags'
-                    )
-                ),
-                'validators' => array(
-                    array(
-                        'name' => 'StringLength',
-                        'options' => array(
-                            'encoding' => 'UTF-8',
-                            'min' => 2,
-                            'max' => 140
-                        )
+            'name' => 'name',
+            'required' => true,
+            'filters' => array(
+                array(
+                    'name' => 'StripTags'
+                )
+            ),
+            'validators' => array(
+                array(
+                    'name' => 'StringLength',
+                    'options' => array(
+                        'encoding' => 'UTF-8',
+                        'min' => 2,
+                        'max' => 140
                     )
                 )
-            ))
+            )
         ));
 
         $this->add(array(

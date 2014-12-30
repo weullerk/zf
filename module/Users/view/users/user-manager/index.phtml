@@ -1,0 +1,22 @@
+<section class="users">
+    <h2>Users</h2>
+    <table class="table">
+        <thead class="">
+            <tr>
+                <td>Name</td>
+                <td>User ID/Email</td>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($this->users as $user): ?>
+            <tr>
+                <td><?= $user->name; ?></td>
+                <td><?= $user->email; ?></td>
+                <td><a href="user-manager/edit/<?= $user->id; ?>">Edit</a> | <a href="user-manager/delete/<?= $user->id; ?>">Delete</a></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+    <p><a href="user-manager/create">>> Add User </a></p>
+</section>

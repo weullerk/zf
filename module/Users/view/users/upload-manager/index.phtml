@@ -1,0 +1,22 @@
+<section class="users">
+    <h2>My Uploads</h2>
+    <table class="table">
+        <thead class="">
+        <tr>
+            <td>Label</td>
+            <td>Filename</td>
+            <td></td>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($this->myUploads as $upload): ?>
+            <tr>
+                <td><?= $upload->label; ?></td>
+                <td><?= $upload->filename; ?></td>
+                <td><a href="upload-manager/delete/<?= $upload->id; ?>">Delete</a></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+    <p><a href="upload-manager/upload">>> Add Upload </a></p>
+</section>
