@@ -1,0 +1,46 @@
+<section class="users">
+    <h2>Upload Sharing</h2>
+
+    <table class="table">
+        <thead class="">
+        <tr>
+            <td>Shared User</td>
+            <td>Email</td>
+            <td>Actions</td>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($this->users as $user): ?>
+            <tr>
+                <td><?= $user->name; ?></td>
+                <td><?= $user->email; ?></td>
+                <td><a href="#">Delete</a></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+
+    <h2>Add Sharing</h2>
+    <?php
+    $form = $this->form;
+    $form->prepare();
+    $form->setAttribute('action', $this->url(null, array('controller' => 'upload-manager', 'action' => 'add-share', 'id' => $this->id)));
+    $form->setAttribute('method', 'post');
+    echo $this->form()->openTag($form);
+    ?>
+
+    <dl class="zend_form">
+        <dt><?php echo $this->formLabel($form->get('users')); ?></dt>
+        <dd><?php
+            echo $this->FormSelect($form->get('users')->setOptions(array('1' => 'teste')));
+            echo $this->formElementErrors($form->get('users'));
+            ?></dd>
+        <dd><?php
+            echo $this->formElement($form->get('submit'));
+            echo $this->formElementErrors($form->get('submit'));
+            ?></dd>
+    </dl>
+
+    <?php echo $this->form()->closeTag(); ?>
+
+</section>

@@ -73,4 +73,20 @@ class UserTable
     {
         $this->tableGateway->delete(array('id' => $id));
     }
+
+    public function getAllUsersForSelect() {
+        $users = array();
+
+        $rowset = $this->tableGateway->select(
+            function(\Zend\Db\Sql\Select $select) {
+                $select->columns(array('id', 'name'));
+            }
+        );
+
+        foreach($rowset as $user) {
+            $users[$user->id] = $user->name;
+        }
+
+        return $users;
+    }
 }

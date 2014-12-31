@@ -76,7 +76,8 @@ class Module
                 },
                 'UploadTable' => function($sm) {
                     $tableGateway = $sm->get('UploadTableGateway');
-                    $table = new UploadTable($tableGateway);
+                    $uploadSharingTableGateway = $sm->get('UploadSharingTableGateway');
+                    $table = new UploadTable($tableGateway, $uploadSharingTableGateway);
                     return $table;
                 },
                 'UploadTableGateway' => function($sm) {
@@ -84,6 +85,10 @@ class Module
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new Upload());
                     return new TableGateway('uploads', $dbAdapter, null, $resultSetPrototype);
+                },
+                'UploadSharingTableGateway' => function($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    return new TableGateway('uploads_sharing', $dbAdapter);
                 },
 
                 //FORMS
@@ -104,6 +109,10 @@ class Module
                 },
                 'UploadForm' => function($sm) {
                     $form = new \Users\Form\UploadForm();
+                    return $form;
+                },
+                'UserSharingForm' => function($sm) {
+                    $form = new \Users\Form\UserSharingForm();
                     return $form;
                 },
 
@@ -134,9 +143,7 @@ class Module
                 }
             ),
             'invokables' => array(),
-            'services' => array(
-
-            ),
+            'services' => array(),
             'shared' => array()
         );
     }

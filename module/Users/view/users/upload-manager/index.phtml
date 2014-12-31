@@ -12,11 +12,33 @@
         <?php foreach ($this->myUploads as $upload): ?>
             <tr>
                 <td><?= $upload->label; ?></td>
-                <td><?= $upload->filename; ?></td>
-                <td><a href="upload-manager/delete/<?= $upload->id; ?>">Delete</a></td>
+                <td><a href="upload-manager/file-download/<?= $upload->id; ?>"><?= $upload->filename; ?></a></td>
+                <td><a href="upload-manager/edit/<?= $upload->id; ?>">Edit</a> | <a href="upload-manager/delete/<?= $upload->id; ?>">Delete</a></td>
             </tr>
         <?php endforeach; ?>
         </tbody>
     </table>
-    <p><a href="upload-manager/upload">>> Add Upload </a></p>
+
+    <h2>Shared Uploads</h2>
+
+    <table class="table">
+        <thead class="">
+        <tr>
+            <td>Label</td>
+            <td>Filename</td>
+            <td>Shared By</td>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($this->mySharedUploads as $upload): ?>
+            <tr>
+                <td><?= $upload->label; ?></td>
+                <td><a href="upload-manager/file-download/<?= $upload->id; ?>"><?= $upload->filename; ?></a></td>
+                <td><?= $upload->name; ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+
+    <p><a href="upload-manager/upload">>> Add Upload</a></p>
 </section>

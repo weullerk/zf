@@ -14,11 +14,12 @@ use Zend\Db\TableGateway\TableGateway;
 
 class UploadTable
 {
-    protected $tableGateway;
+    protected $tableGateway, $uploadSharingTableGateway;
 
-    public function __construct(TableGateway $tableGateway)
+    public function __construct(TableGateway $tableGateway, TableGateway $uploadSharingTableGateway)
     {
         $this->tableGateway = $tableGateway;
+        $this->uploadSharingTableGateway = $uploadSharingTableGateway;
     }
 
     public function saveUpload(Upload $upload)
@@ -74,5 +75,50 @@ class UploadTable
     {
         $id = (int) $id;
         $this->tableGateway->delete(array('id' => $id));
+    }
+
+    public function addSharing($uploadId, $userId)
+    {
+        $data = array(
+            'upload_id' => (int) $uploadId,
+            'user_id' => (int) $userId
+        );
+        $this->uploadSharingTableGateway->insert($data);
+    }
+
+    public function removeSharing($uploadId, $userId)
+    {
+        $data = array(
+            'upload_id' => (int) $uploadId,
+            'user_id' => (int) $userId
+        );
+        $this->uploadSharingTableGateway->delete($data);
+    }
+
+    public function getSharedUsers($uploadId)
+    {
+        $uploadId = (int) $uploadId;
+        $rowset = $this->uploadSharingTableGateway->select(
+            function(\Zend\Db\Sql\Select $select) use ($uploadId) {
+                $select->columns(array())
+                    ->where(array('uploads_sharing.upload_id' => $uploadId))
+                    ->join('user', 'uploads_sharing.user_id = user.id');
+            }
+        );
+        return $rowset;
+    }
+
+    public function getSharedUploadsForUserId($userId)
+    {
+        $userId = (int) $userId;
+        $rowset = $this->uploadSharingTableGateway->select(
+            function(\Zend\Db\Sql\Select $select) use ($userId) {
+                $select->columns(array())
+                    ->where(array('uploads_sharing.user_id' => $userId))
+                    ->join('uploads', 'uploads_sharing.upload_id = uploads.id')
+                    ->join('user', 'uploads_sharing.user_id = user.id', array('name'));
+            }
+        );
+        return $rowset;
     }
 }

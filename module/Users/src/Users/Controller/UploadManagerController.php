@@ -12,6 +12,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Users\Model\User;
 use Users\Model\UserTable;
+use Zend\View\View;
 
 class UploadManagerController extends AbstractActionController
 {
@@ -27,8 +28,10 @@ class UploadManagerController extends AbstractActionController
         $user = $userTable->getUserByEmail($userEmail);
 
         $viewModel = new ViewModel(array(
-            'myUploads' => $uploadTable->getUploadsByUserId($user->id)
+            'myUploads' => $uploadTable->getUploadsByUserId($user->id),
+            'mySharedUploads' => $uploadTable->getSharedUploadsForUserId($user->id)
         ));
+
         return $viewModel;
     }
 
@@ -38,6 +41,7 @@ class UploadManagerController extends AbstractActionController
         $viewModel = new ViewModel(array(
             'form' => $form
         ));
+
         return $viewModel;
     }
 
@@ -98,9 +102,75 @@ class UploadManagerController extends AbstractActionController
         unlink($this->getFileUploadLocation() . '/' . $upload->filename);
         $uploadTable->deleteUpload($this->params()->fromRoute('id'));
 
-        $this->redirect()->toRoute(null, array(
+        return $this->redirect()->toRoute(null, array(
             'controller' => 'upload-manager',
             'action' => 'index'
         ));
+    }
+
+    public function editAction()
+    {
+        $uploadTable = $this->getServiceLocator()->get('UploadTable');
+        $userTable = $this->getServiceLocator()->get('UserTable');
+
+        $sharingForm = $this->getServiceLocator()->get('UserSharingForm');
+        $userSharingForm = new $sharingForm($userTable->getAllUsersForSelect());
+
+        $viewModel = new ViewModel(array(
+            'users' => $uploadTable->getSharedUsers($this->params()->fromRoute('id')),
+            'allUsers' => $userTable->fetchAll(),
+            'form' => $userSharingForm,
+            'id' => $this->params()->fromRoute('id')
+        ));
+
+        return $viewModel;
+    }
+
+    public function addShareAction()
+    {
+        if (!$this->request->isPost()) {
+            $this->redirect()->toRoute(null, array('controller' => 'upload-manager', 'action' => 'index'));
+        }
+
+        $userTable = $this->getServiceLocator()->get('UserTable');
+        $uploadTable = $this->getServiceLocator()->get('UploadTable');
+
+        $post = $this->request->getPost();
+
+        $userSharingForm = $this->getServiceLocator()->get('UserSharingForm');
+        $userSharingForm = new $userSharingForm($userTable->getAllUsersForSelect());
+        $userSharingForm->setData($post);
+
+        if ($userSharingForm->isValid()) {
+            $uploadTable->addSharing($this->params()->fromRoute('id'), $this->params()->fromPost('users'));
+        }
+
+        return $this->redirect()->toRoute(null, array(
+            'controller' => 'upload-manager',
+            'action' => 'edit',
+            'id' => $this->params()->fromRoute('id')
+        ));
+    }
+
+    public function fileDownloadAction()
+    {
+        $uploadId = $this->params()->fromRoute('id');
+        $uploadTable = $this->getServiceLocator()->get('UploadTable');
+        $upload = $uploadTable->getUpload($uploadId);
+
+        //Fetch Configuration from Module Config
+        $uploadPath = $this->getFileUploadLocation();
+        $file = file_get_contents($uploadPath . '/' . $upload->filename);
+
+        //Directly return the Response
+        $response  = $this->getEvent()->getResponse();
+        $response->getHeaders()->addHeaders(array(
+            'Content-Type' => 'application/octet-stream',
+            'Content-Disposition' => 'attachment;filename="' . $upload->filename . '"'
+        ));
+
+        $response->setContent($file);
+
+        return $response;
     }
 }
